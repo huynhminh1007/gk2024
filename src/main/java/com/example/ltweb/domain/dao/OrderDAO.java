@@ -63,4 +63,13 @@ public class OrderDAO {
                         .execute()
         );
     }
+
+    public static Order getOrderById(int id) {
+        return JDBIConnector.getInstance().withHandle(handle -> (
+                handle.createQuery("SELECT * FROM orders WHERE id = :id")
+                        .bind("id", id)
+                        .mapToBean(Order.class)
+                        .first()
+                ));
+    }
 }

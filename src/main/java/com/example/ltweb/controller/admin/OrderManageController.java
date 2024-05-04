@@ -1,6 +1,8 @@
 package com.example.ltweb.controller.admin;
 
+import com.example.ltweb.domain.model.Log;
 import com.example.ltweb.domain.model.Order;
+import com.example.ltweb.domain.service.LogService;
 import com.example.ltweb.domain.service.OrderService;
 import com.example.ltweb.domain.service.UserService;
 import com.example.ltweb.utils.JsonHelper;
@@ -35,10 +37,23 @@ public class OrderManageController extends HttpServlet {
             String newValue = req.getParameter("newValue");
             int id = Integer.parseInt(req.getParameter("id"));
             int res;
-            System.out.println(id + " " + newValue);
+
             switch (edit) {
                 case "status":
-                    res = OrderService.update(id, edit, Integer.parseInt(newValue));
+                    Order order = OrderService.findOrderById(id);
+                    if(order != null) {
+                        res = OrderService.update(id, edit, Integer.parseInt(newValue));
+
+                        Log log = new Log();
+                        log.setIp(req.getRemoteAddr());
+                        log.setLevel(Log.LogInfo.WARNING);
+                        log.setBeforeValue(new Gson().toJson(order));
+                        order.setStatus(Integer.parseInt(newValue));
+                        log.setAfterValue(new Gson().toJson(order));
+                        log.setAddress("Logs");
+
+                        LogService.log(log);
+                    }
                     break;
                 default: return;
             }

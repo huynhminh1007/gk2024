@@ -32,9 +32,14 @@ public class OrderService {
         return OrderDAO.update(id, column, newValue);
     }
 
+    public static Order findOrderById(int id) {
+        return OrderDAO.getOrderById(id);
+    }
+
     public static void main(String[] args) {
         HashMap<String, Object> map = new HashMap();
         map.put("search", 17);
         System.out.println(OrderService.getInstance().update(1, "status", 1));
+        System.out.println(OrderService.getInstance().findOrderById(2).getId());
     }
 }

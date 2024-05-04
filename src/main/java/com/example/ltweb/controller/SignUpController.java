@@ -1,8 +1,11 @@
 package com.example.ltweb.controller;
 
+import com.example.ltweb.domain.model.Log;
 import com.example.ltweb.domain.model.User;
+import com.example.ltweb.domain.service.LogService;
 import com.example.ltweb.domain.service.UserService;
 import com.example.ltweb.utils.JsonHelper;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -29,9 +32,18 @@ public class SignUpController extends HttpServlet {
 
         if(email != null && password != null && fullName != null && gender != null) {
             String message;
+            User user = new User(email, password, fullName, gender);
 
-            if(UserService.getInstance().addUser(new User(email, password, fullName, gender))) {
+            if(UserService.getInstance().addUser(user)) {
                 message = "Đăng ký thành công";
+
+                Log log = new Log();
+                log.setIp(req.getRemoteAddr());
+                log.setAddress("Users");
+                log.setLevel(Log.LogInfo.INFO);
+                log.setAfterValue(new Gson().toJson(user));
+
+                LogService.getInstance().log(log);
             }
             else {
                 message = "Tài khoản đã được sử dụng";
