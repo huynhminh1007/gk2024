@@ -118,9 +118,13 @@
                         let date = new Date(data);
                         return date.toLocaleDateString();
                     }
-                }
+                },
+                {
+                    render(data, type, row) {
+                        return '<button class="delete-btn">Xóa</button>'
+                }}
             ]
-        })
+        });
 
         $(document).on('change', '.status-select', function () {
             $.ajax({
@@ -132,7 +136,13 @@
                     'newValue': $(this).val()
                 }
             });
-        })
+        });
+
+        $(document).on('click', '.delete-btn', function () {
+            let row = $(this).closest('tr');
+            let id = row.data('id');
+            row.remove();
+        });
     })
 </script>
 </html>
